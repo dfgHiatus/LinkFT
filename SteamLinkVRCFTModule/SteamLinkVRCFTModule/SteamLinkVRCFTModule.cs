@@ -65,9 +65,9 @@ public class SteamLinkVrcftModule : ExtTrackingModule
 
         {
             var fLeftOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[0],
-                OscHandler.UeData[UnifiedExpressions.EyeSquintLeft]);
+                OscHandler.UeData[EyeSquintLeft]);
             var fRightOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[1],
-                OscHandler.UeData[UnifiedExpressions.EyeSquintRight]);
+                OscHandler.UeData[EyeSquintRight]);
 
             UnifiedTracking.Data.Eye.Left.Openness = fLeftOpenness; // fLeftOpenness;
             UnifiedTracking.Data.Eye.Right.Openness = fRightOpenness; // fRightOpenness;

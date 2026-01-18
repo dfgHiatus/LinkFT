@@ -8,12 +8,12 @@ public class Oscm
 {
     public string Address = "";
 
-    public ArrayList Values = new ArrayList();
+    public readonly ArrayList Values = new();
 
     //int = 0, float = 1, blob = 2, string = 3, error = -1
-    private List<int> _valType = new List<int>();
+    private readonly List<int> _valType = new();
 
-    public int GetAddress(ref byte[] msg, int index)
+    private int GetAddress(ref byte[] msg, int index)
     {
         while (index < msg.Length)
         {
@@ -83,7 +83,7 @@ public class Oscm
         return -1;
     }
 
-    public int GetValues(ref byte[] message, int i, ILogger log)
+    private int GetValues(ref byte[] message, int i, ILogger log)
     {
         var valuecount = 0;
         var maxVal = _valType.Count();
@@ -191,9 +191,9 @@ public class Oscm
     }
 }
 
-static public class OscParser
+public static class OscParser
 {
-    static readonly byte[] BufAscii = Encoding.ASCII.GetBytes("#bundle");
+    private static readonly byte[] BufAscii = "#bundle"u8.ToArray();
 
     public static bool IsBundle(ref byte[] buff)
     {
@@ -204,7 +204,7 @@ static public class OscParser
 
         var bundletest = new byte[7];
         Array.Copy(buff, bundletest, 7);
-        return Enumerable.SequenceEqual(bundletest, BufAscii);
+        return bundletest.SequenceEqual(BufAscii);
     }
 
     public static uint SwapEndianness(uint x)

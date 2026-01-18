@@ -87,7 +87,7 @@ public class OscHandler
     //based on https://docs.google.com/spreadsheets/d/118jo960co3Mgw8eREFVBsaJ7z0GtKNr52IB4Bz99VTA/edit#gid=0
     private static readonly
         Dictionary<string, List<UnifiedExpressions>> MapOscDirectXrfbUnifiedExpressions =
-            new Dictionary<string, List<UnifiedExpressions>>
+            new()
             {
                 { "/sl/xrfb/facew/UpperLidRaiserL", new List<UnifiedExpressions> { EyeWideLeft } },
                 { "/sl/xrfb/facew/UpperLidRaiserR", new List<UnifiedExpressions> { EyeWideRight } },
@@ -200,9 +200,9 @@ public class OscHandler
         _receiver.ReceiveTimeout = TimeoutMs;
 
         _loop = true;
-        _thread = new Thread(new ThreadStart(ListenLoop));
+        _thread = new Thread(ListenLoop);
         _thread.Start();
-        // 1 second delay to hopefully fix any race conditions on thread initalization
+        // 1 second delay to hopefully fix any race conditions on thread initialization
         //TODO remove this and actually fix the issue
         Thread.Sleep(1000);
     }
