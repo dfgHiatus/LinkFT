@@ -41,4 +41,29 @@
           DestinationFolder="$(VRCFTPath)" />
   </Target>
 
+  <Target Name="ZipModule" AfterTargets="PostBuild">
+    <PropertyGroup>
+      <TempZipFolder>$(OutputPath)temp_zip</TempZipFolder>
+      <ZipFileName>SteamLinkVRCFTModule.zip</ZipFileName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <FilesToZip Include="$(OutputPath)SteamLinkVRCFTModule.dll" />
+      <FilesToZip Include="$(OutputPath)module.json" />
+    </ItemGroup>
+
+    <Delete Files="$(OutputPath)$(ZipFileName)" ContinueOnError="true" />
+
+    <MakeDir Directories="$(TempZipFolder)" />
+
+    <Copy SourceFiles="@(FilesToZip)" DestinationFolder="$(TempZipFolder)" />
+
+    <ZipDirectory SourceDirectory="$(TempZipFolder)"
+                  DestinationFile="$(OutputPath)$(ZipFileName)" />
+
+    <RemoveDir Directories="$(TempZipFolder)" />
+
+    <Message Text="Created module zip: $(OutputPath)$(ZipFileName)" Importance="high" />
+  </Target>
+
 </Project>
