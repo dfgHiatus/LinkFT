@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using SteamLinkVRCFTModule;
-using System.Net.Sockets;
-using VRCFaceTracking;
+﻿using VRCFaceTracking;
 using VRCFaceTracking.Core.Params.Expressions;
 using static VRCFaceTracking.Core.Params.Expressions.UnifiedExpressions;
 

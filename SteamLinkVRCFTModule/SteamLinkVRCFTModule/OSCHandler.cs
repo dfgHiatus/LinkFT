@@ -1,17 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using VRCFaceTracking;
-using VRCFaceTracking.Core.OSC;
 using VRCFaceTracking.Core.Params.Expressions;
-using VRCFaceTracking.OSC;
-using System.Buffers.Binary;
-using System.Globalization;
 
 namespace SteamLinkVRCFTModule
 {
