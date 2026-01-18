@@ -15,7 +15,8 @@ public class SteamLinkVrcftModule : ExtTrackingModule
     {
         ModuleInformation.Name = "SteamLink Module";
 
-        var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("SteamLinkVRCFTModule.Assets.steamlink.png");
+        var stream = System.Reflection.Assembly.GetExecutingAssembly()
+            .GetManifestResourceStream("SteamLinkVRCFTModule.Assets.steamlink.png");
         ModuleInformation.StaticImages = stream != null ? new List<Stream> { stream } : ModuleInformation.StaticImages;
 
         //TODO better error handling on fail? isInit for OSC Handler?
@@ -42,6 +43,7 @@ public class SteamLinkVrcftModule : ExtTrackingModule
             {
                 fNmAngleX = 0.0f;
             }
+
             if (float.IsNaN(fNmAngleY))
             {
                 fNmAngleY = 0.0f;
@@ -59,18 +61,19 @@ public class SteamLinkVrcftModule : ExtTrackingModule
             UnifiedTracking.Data.Eye.Right.PupilDiameter_MM = 5f;
             UnifiedTracking.Data.Eye._maxDilation = 10;
             UnifiedTracking.Data.Eye._minDilation = 0;
-
         }
 
         {
-            var fLeftOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[0], OscHandler.UeData[UnifiedExpressions.EyeSquintLeft]);
-            var fRightOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[1], OscHandler.UeData[UnifiedExpressions.EyeSquintRight]);
+            var fLeftOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[0],
+                OscHandler.UeData[UnifiedExpressions.EyeSquintLeft]);
+            var fRightOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[1],
+                OscHandler.UeData[UnifiedExpressions.EyeSquintRight]);
 
-            UnifiedTracking.Data.Eye.Left.Openness = fLeftOpenness;// fLeftOpenness;
-            UnifiedTracking.Data.Eye.Right.Openness = fRightOpenness;//fRightOpenness;
+            UnifiedTracking.Data.Eye.Left.Openness = fLeftOpenness; // fLeftOpenness;
+            UnifiedTracking.Data.Eye.Right.Openness = fRightOpenness; // fRightOpenness;
         }
-
     }
+
     private void UpdateFaceTracking()
     {
         foreach (var entry in OscHandler.UeData)
@@ -84,8 +87,12 @@ public class SteamLinkVrcftModule : ExtTrackingModule
         //UnifiedTracking.Data.Shapes[(int)MouthUpperDeepenRight].Weight = Math.Max(0, UnifiedTracking.Data.Shapes[(int)MouthUpperUpRight].Weight - UnifiedTracking.Data.Shapes[(int)NoseSneerRight].Weight);
 
         //lip Suck
-        UnifiedTracking.Data.Shapes[(int)LipSuckUpperLeft].Weight = Math.Min(1.0f - (float)Math.Pow(UnifiedTracking.Data.Shapes[(int)MouthUpperLeft].Weight, 1f / 6f), UnifiedTracking.Data.Shapes[(int)LipSuckUpperLeft].Weight);
-        UnifiedTracking.Data.Shapes[(int)LipSuckUpperRight].Weight = Math.Min(1.0f - (float)Math.Pow(UnifiedTracking.Data.Shapes[(int)MouthUpperRight].Weight, 1f / 6f), UnifiedTracking.Data.Shapes[(int)LipSuckUpperRight].Weight);
+        UnifiedTracking.Data.Shapes[(int)LipSuckUpperLeft].Weight = Math.Min(
+            1.0f - (float)Math.Pow(UnifiedTracking.Data.Shapes[(int)MouthUpperLeft].Weight, 1f / 6f),
+            UnifiedTracking.Data.Shapes[(int)LipSuckUpperLeft].Weight);
+        UnifiedTracking.Data.Shapes[(int)LipSuckUpperRight].Weight = Math.Min(
+            1.0f - (float)Math.Pow(UnifiedTracking.Data.Shapes[(int)MouthUpperRight].Weight, 1f / 6f),
+            UnifiedTracking.Data.Shapes[(int)LipSuckUpperRight].Weight);
     }
 
     public override void Update()
@@ -94,6 +101,7 @@ public class SteamLinkVrcftModule : ExtTrackingModule
         UpdateEyeTracking();
         UpdateFaceTracking();
     }
+
     public override void Teardown()
     {
         _oscHandler.Teardown();
