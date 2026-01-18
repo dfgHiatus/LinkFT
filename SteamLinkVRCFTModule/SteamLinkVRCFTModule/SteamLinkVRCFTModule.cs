@@ -32,11 +32,11 @@ public class SteamLinkVrcftModule : ExtTrackingModule
     private void UpdateEyeTracking()
     {
         {
-            float fAngleX = MathF.Atan2(_oscHandler.EyeTrackData[0], -_oscHandler.EyeTrackData[2]);
-            float fAngleY = MathF.Atan2(_oscHandler.EyeTrackData[1], -_oscHandler.EyeTrackData[2]);
+            var fAngleX = MathF.Atan2(_oscHandler.EyeTrackData[0], -_oscHandler.EyeTrackData[2]);
+            var fAngleY = MathF.Atan2(_oscHandler.EyeTrackData[1], -_oscHandler.EyeTrackData[2]);
 
-            float fNmAngleX = fAngleX / (MathF.PI / 2.0f) * 2.0f;
-            float fNmAngleY = fAngleY / (MathF.PI / 2.0f) * 2.0f;
+            var fNmAngleX = fAngleX / (MathF.PI / 2.0f) * 2.0f;
+            var fNmAngleY = fAngleY / (MathF.PI / 2.0f) * 2.0f;
 
             if (float.IsNaN(fNmAngleX))
             {
@@ -63,8 +63,8 @@ public class SteamLinkVrcftModule : ExtTrackingModule
         }
 
         {
-            float fLeftOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[0], OscHandler.UeData[UnifiedExpressions.EyeSquintLeft]);
-            float fRightOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[1], OscHandler.UeData[UnifiedExpressions.EyeSquintRight]);
+            var fLeftOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[0], OscHandler.UeData[UnifiedExpressions.EyeSquintLeft]);
+            var fRightOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[1], OscHandler.UeData[UnifiedExpressions.EyeSquintRight]);
 
             UnifiedTracking.Data.Eye.Left.Openness = fLeftOpenness;// fLeftOpenness;
             UnifiedTracking.Data.Eye.Right.Openness = fRightOpenness;//fRightOpenness;
@@ -73,7 +73,7 @@ public class SteamLinkVrcftModule : ExtTrackingModule
     }
     private void UpdateFaceTracking()
     {
-        foreach (KeyValuePair<UnifiedExpressions, float> entry in OscHandler.UeData)
+        foreach (var entry in OscHandler.UeData)
         {
             UnifiedTracking.Data.Shapes[(int)entry.Key].Weight = entry.Value;
         }

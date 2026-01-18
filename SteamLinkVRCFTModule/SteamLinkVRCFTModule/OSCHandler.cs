@@ -205,17 +205,17 @@ public class OscHandler
 
 
                     var length = _receiver.Receive(buffer);
-                    List<Oscm> msgList = new List<Oscm>();
+                    var msgList = new List<Oscm>();
                     if (OscParser.IsBundle(ref buffer))
                     {
-                        int i = 16;
+                        var i = 16;
                         var elLength = new byte[4];
                         while (i < length)
                         {
-                            int messageLength = 0;
+                            var messageLength = 0;
                             if (BitConverter.IsLittleEndian)
                             {
-                                byte[] msgsize = new byte[4];
+                                var msgsize = new byte[4];
                                 msgsize[0] = buffer[i]; msgsize[1] = buffer[i + 1]; msgsize[2] = buffer[i + 2]; msgsize[3] = buffer[i + 3];
                                 Array.Reverse(msgsize);
                                 messageLength = BitConverter.ToInt32(msgsize, 0);
@@ -224,8 +224,8 @@ public class OscHandler
                             {
                                 messageLength = BitConverter.ToInt32(buffer, i);
                             }
-                            int adjustLength = 4 - messageLength % 4;
-                            byte[] temp = new byte[messageLength];
+                            var adjustLength = 4 - messageLength % 4;
+                            var temp = new byte[messageLength];
                             Array.Copy(buffer, i + 4, temp, 0, messageLength);
                             msgList.Add(new Oscm(ref temp, _logger));
                             i = i + messageLength + adjustLength;
@@ -236,13 +236,13 @@ public class OscHandler
                     {
                         msgList.Add(new Oscm(ref buffer, _logger));
                     }
-                    foreach (Oscm oscMessage in msgList)
+                    foreach (var oscMessage in msgList)
                     {
                         if (oscMessage == null) continue;
                         if (oscMessage.Values.Count < 1) continue;
                         if (oscMessage.Address == "/sl/eyeTrackedGazePoint")
                         {
-                            for (int i = 0; i < 3; i++)
+                            for (var i = 0; i < 3; i++)
                             {
                                 EyeTrackData[i] = (float)oscMessage.Values[i];
                             }
@@ -262,7 +262,7 @@ public class OscHandler
 
                         if (MapOscDirectXrfbUnifiedExpressions.ContainsKey(oscMessage.Address))
                         {
-                            foreach (UnifiedExpressions unifiedExpression in MapOscDirectXrfbUnifiedExpressions[oscMessage.Address])
+                            foreach (var unifiedExpression in MapOscDirectXrfbUnifiedExpressions[oscMessage.Address])
                             {
                                 //This may not be strictly safe but should be good enough for our use case
                                 UeData[unifiedExpression] = (float)oscMessage.Values[0];                                }

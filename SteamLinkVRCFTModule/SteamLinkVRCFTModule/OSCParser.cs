@@ -38,10 +38,10 @@ public class Oscm
 
     public int GetParams(ref byte[] msg, int index, ILogger log)
     {
-        int valmax = 0;
+        var valmax = 0;
         //we start at the parameter not the "," in an osc string, and then we need
         // an additional to account for offset
-        int typetagstart = index-1;
+        var typetagstart = index-1;
         while (index < msg.Length)
         {
             switch (msg[index])
@@ -79,11 +79,11 @@ public class Oscm
     }
     public int GetValues(ref byte[] message, int i, ILogger log)
     {
-        int valuecount = 0;
-        int maxVal = _valType.Count();
+        var valuecount = 0;
+        var maxVal = _valType.Count();
         while (i < message.Length)
         {
-            byte[] msgsize = new byte[4];
+            var msgsize = new byte[4];
             switch (_valType[valuecount])
             {
                 case 0:
@@ -121,7 +121,7 @@ public class Oscm
                     break;
                 case 3:
                     log.LogInformation("string");
-                    int initialI = i;
+                    var initialI = i;
                     while (message[i] != 0x00)
                     {
                         i++;
@@ -151,7 +151,7 @@ public class Oscm
 
     public Oscm(ref byte[] message, ILogger iLogger)
     {
-        int i = 0;
+        var i = 0;
         i = GetAddress(ref message, i);
         if (i == -1)
         {
@@ -183,7 +183,7 @@ static public class OscParser
         {
             return false;
         }
-        byte[] bundletest = new byte[7];
+        var bundletest = new byte[7];
         Array.Copy(buff, bundletest, 7);
         return Enumerable.SequenceEqual(bundletest, BufAscii);
     }
