@@ -4,10 +4,10 @@ using static VRCFaceTracking.Core.Params.Expressions.UnifiedExpressions;
 
 namespace SteamLinkVRCFTModule;
 
-public class SteamLinkVRCFTModule : ExtTrackingModule
+public class SteamLinkVrcftModule : ExtTrackingModule
 {
-    private OSCHandler OSCHandler;
-    private const int DEFAULT_PORT = 9015;
+    private OscHandler _oscHandler;
+    private const int DefaultPort = 9015;
 
     public override (bool SupportsEye, bool SupportsExpression) Supported => (true, true);
 
@@ -19,7 +19,7 @@ public class SteamLinkVRCFTModule : ExtTrackingModule
         ModuleInformation.StaticImages = stream != null ? new List<Stream> { stream } : ModuleInformation.StaticImages;
 
         //TODO better error handling on fail? isInit for OSC Handler?
-        OSCHandler = new OSCHandler(Logger, DEFAULT_PORT);
+        _oscHandler = new OscHandler(Logger, DefaultPort);
 
         return (true, true);
     }
@@ -32,8 +32,8 @@ public class SteamLinkVRCFTModule : ExtTrackingModule
     private void UpdateEyeTracking()
     {
         {
-            float fAngleX = MathF.Atan2(OSCHandler.eyeTrackData[0], -OSCHandler.eyeTrackData[2]);
-            float fAngleY = MathF.Atan2(OSCHandler.eyeTrackData[1], -OSCHandler.eyeTrackData[2]);
+            float fAngleX = MathF.Atan2(_oscHandler.EyeTrackData[0], -_oscHandler.EyeTrackData[2]);
+            float fAngleY = MathF.Atan2(_oscHandler.EyeTrackData[1], -_oscHandler.EyeTrackData[2]);
 
             float fNmAngleX = fAngleX / (MathF.PI / 2.0f) * 2.0f;
             float fNmAngleY = fAngleY / (MathF.PI / 2.0f) * 2.0f;
@@ -63,8 +63,8 @@ public class SteamLinkVRCFTModule : ExtTrackingModule
         }
 
         {
-            float fLeftOpenness = CalculateEyeOpenness(OSCHandler.eyelids[0], OSCHandler.ueData[UnifiedExpressions.EyeSquintLeft]);
-            float fRightOpenness = CalculateEyeOpenness(OSCHandler.eyelids[1], OSCHandler.ueData[UnifiedExpressions.EyeSquintRight]);
+            float fLeftOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[0], OscHandler.UeData[UnifiedExpressions.EyeSquintLeft]);
+            float fRightOpenness = CalculateEyeOpenness(_oscHandler.Eyelids[1], OscHandler.UeData[UnifiedExpressions.EyeSquintRight]);
 
             UnifiedTracking.Data.Eye.Left.Openness = fLeftOpenness;// fLeftOpenness;
             UnifiedTracking.Data.Eye.Right.Openness = fRightOpenness;//fRightOpenness;
@@ -73,7 +73,7 @@ public class SteamLinkVRCFTModule : ExtTrackingModule
     }
     private void UpdateFaceTracking()
     {
-        foreach (KeyValuePair<UnifiedExpressions, float> entry in OSCHandler.ueData)
+        foreach (KeyValuePair<UnifiedExpressions, float> entry in OscHandler.UeData)
         {
             UnifiedTracking.Data.Shapes[(int)entry.Key].Weight = entry.Value;
         }
@@ -96,6 +96,6 @@ public class SteamLinkVRCFTModule : ExtTrackingModule
     }
     public override void Teardown()
     {
-        OSCHandler.Teardown();
+        _oscHandler.Teardown();
     }
 }

@@ -4,15 +4,15 @@ using Microsoft.Extensions.Logging;
 
 namespace SteamLinkVRCFTModule;
 
-public class OSCM
+public class Oscm
 {
     public string Address = "";
     public ArrayList Values = new ArrayList();
     //int = 0, float = 1, blob = 2, string = 3, error = -1
-    private List<int> valType = new List<int>();
+    private List<int> _valType = new List<int>();
 
 
-    public int getAddress(ref byte[] msg, int index)
+    public int GetAddress(ref byte[] msg, int index)
     {
         while (index < msg.Length)
         {
@@ -36,7 +36,7 @@ public class OSCM
         return -1;
     }
 
-    public int getParams(ref byte[] msg, int index, ILogger log)
+    public int GetParams(ref byte[] msg, int index, ILogger log)
     {
         int valmax = 0;
         //we start at the parameter not the "," in an osc string, and then we need
@@ -51,40 +51,40 @@ public class OSCM
                     return (4 - ((index - typetagstart) % 4 )+ index);
                 //float
                 case 0x66:
-                    valType.Add(1);
+                    _valType.Add(1);
                     valmax++;
                     break;
                 //int
                 case 0x69:
-                    valType.Add(0);
+                    _valType.Add(0);
                     valmax++;
                     break;
                 //blob
                 case 0x62:
-                    valType.Add(2);
+                    _valType.Add(2);
                     valmax++;
                     break;
                 //string
                 case 0x72:
-                    valType.Add(3);
+                    _valType.Add(3);
                     valmax++;
                     break;
                 default:
-                    valType.Add(-1);
+                    _valType.Add(-1);
                     break;
             }
             index++;
         }
         return -1;
     }
-    public int getValues(ref byte[] message, int i, ILogger log)
+    public int GetValues(ref byte[] message, int i, ILogger log)
     {
         int valuecount = 0;
-        int maxVal = valType.Count();
+        int maxVal = _valType.Count();
         while (i < message.Length)
         {
             byte[] msgsize = new byte[4];
-            switch (valType[valuecount])
+            switch (_valType[valuecount])
             {
                 case 0:
                     if (BitConverter.IsLittleEndian)
@@ -149,22 +149,22 @@ public class OSCM
         return -1;
     }
 
-    public OSCM(ref byte[] message, ILogger iLogger)
+    public Oscm(ref byte[] message, ILogger iLogger)
     {
         int i = 0;
-        i = getAddress(ref message, i);
+        i = GetAddress(ref message, i);
         if (i == -1)
         {
             iLogger.LogInformation("fail at addr");
             return;
         }
-        i = getParams(ref message, i, iLogger);
+        i = GetParams(ref message, i, iLogger);
         if (i == -1)
         {
             iLogger.LogInformation("fail at param");
             return;
         }
-        i = getValues(ref message, i, iLogger);
+        i = GetValues(ref message, i, iLogger);
         if (i == -1)
         {
             iLogger.LogInformation("fail at value");
@@ -174,9 +174,9 @@ public class OSCM
 
 }
 
-static public class OSCParser
+static public class OscParser
 {
-    static readonly byte[] bufASCII = Encoding.ASCII.GetBytes("#bundle");
+    static readonly byte[] BufAscii = Encoding.ASCII.GetBytes("#bundle");
     public static bool IsBundle(ref byte[] buff)
     {
         if(buff == null|| buff.Length<8)
@@ -185,16 +185,16 @@ static public class OSCParser
         }
         byte[] bundletest = new byte[7];
         Array.Copy(buff, bundletest, 7);
-        return Enumerable.SequenceEqual(bundletest, bufASCII);
+        return Enumerable.SequenceEqual(bundletest, BufAscii);
     }
-    public static uint swapEndianness(uint x)
+    public static uint SwapEndianness(uint x)
     {
         return ((x & 0x000000ff) << 24) +  // First byte
                ((x & 0x0000ff00) << 8) +   // Second byte
                ((x & 0x00ff0000) >> 8) +   // Third byte
                ((x & 0xff000000) >> 24);   // Fourth byte
     }
-    public static int trueMod(int a, int b)
+    public static int TrueMod(int a, int b)
     {
         return (Math.Abs(a * b) + a) % b;
     }

@@ -7,12 +7,12 @@ namespace SteamLinkVRCFTModule;
 
 using static UnifiedExpressions;
 
-public class OSCHandler
+public class OscHandler
 {
-    public readonly float[] eyeTrackData = new float[3];
-    public readonly float[] eyelids = new float[2];
+    public readonly float[] EyeTrackData = new float[3];
+    public readonly float[] Eyelids = new float[2];
 
-    public static readonly Dictionary<UnifiedExpressions, float> ueData = new(){
+    public static readonly Dictionary<UnifiedExpressions, float> UeData = new(){
         {EyeWideLeft, 0.0f },
         {EyeWideRight, 0.0f },
         {EyeSquintLeft, 0.0f },
@@ -86,7 +86,7 @@ public class OSCHandler
 
     //based on https://docs.google.com/spreadsheets/d/118jo960co3Mgw8eREFVBsaJ7z0GtKNr52IB4Bz99VTA/edit#gid=0
     private static readonly 
-        Dictionary<string, List<UnifiedExpressions>> mapOSCDirectXRFBUnifiedExpressions = new Dictionary<string, List<UnifiedExpressions>>
+        Dictionary<string, List<UnifiedExpressions>> MapOscDirectXrfbUnifiedExpressions = new Dictionary<string, List<UnifiedExpressions>>
         {
             {"/sl/xrfb/facew/UpperLidRaiserL", new List<UnifiedExpressions>{EyeWideLeft}},
             {"/sl/xrfb/facew/UpperLidRaiserR", new List<UnifiedExpressions>{EyeWideRight}},
@@ -167,10 +167,10 @@ public class OSCHandler
     private readonly Thread _thread;
     private readonly ILogger _logger;
     private readonly int _resolvedPort;
-    private const int DEFAULT_PORT = 9015;
-    private const int TIMEOUT_MS = 10_000;
+    private const int DefaultPort = 9015;
+    private const int TimeoutMs = 10_000;
 
-    public OSCHandler(ILogger iLogger, int? port = null)
+    public OscHandler(ILogger iLogger, int? port = null)
     {
         _logger = iLogger;
         if (_receiver != null)
@@ -180,9 +180,9 @@ public class OSCHandler
         }
 
         _receiver = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-        _resolvedPort = port ?? DEFAULT_PORT;
+        _resolvedPort = port ?? DefaultPort;
         _receiver.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), _resolvedPort));
-        _receiver.ReceiveTimeout = TIMEOUT_MS;
+        _receiver.ReceiveTimeout = TimeoutMs;
 
         _loop = true;
         _thread = new Thread(new ThreadStart(ListenLoop));
@@ -205,8 +205,8 @@ public class OSCHandler
 
 
                     var length = _receiver.Receive(buffer);
-                    List<OSCM> msgList = new List<OSCM>();
-                    if (OSCParser.IsBundle(ref buffer))
+                    List<Oscm> msgList = new List<Oscm>();
+                    if (OscParser.IsBundle(ref buffer))
                     {
                         int i = 16;
                         var elLength = new byte[4];
@@ -227,16 +227,16 @@ public class OSCHandler
                             int adjustLength = 4 - messageLength % 4;
                             byte[] temp = new byte[messageLength];
                             Array.Copy(buffer, i + 4, temp, 0, messageLength);
-                            msgList.Add(new OSCM(ref temp, _logger));
+                            msgList.Add(new Oscm(ref temp, _logger));
                             i = i + messageLength + adjustLength;
 
                         }
                     }
                     else
                     {
-                        msgList.Add(new OSCM(ref buffer, _logger));
+                        msgList.Add(new Oscm(ref buffer, _logger));
                     }
-                    foreach (OSCM oscMessage in msgList)
+                    foreach (Oscm oscMessage in msgList)
                     {
                         if (oscMessage == null) continue;
                         if (oscMessage.Values.Count < 1) continue;
@@ -244,28 +244,28 @@ public class OSCHandler
                         {
                             for (int i = 0; i < 3; i++)
                             {
-                                eyeTrackData[i] = (float)oscMessage.Values[i];
+                                EyeTrackData[i] = (float)oscMessage.Values[i];
                             }
                             continue;
                         }
                         if (oscMessage.Address == ("/sl/xrfb/facew/EyesClosedL"))
                         {
-                            eyelids[0] = (float)oscMessage.Values[0];
+                            Eyelids[0] = (float)oscMessage.Values[0];
                             continue;
 
                         }
                         if (oscMessage.Address == "/sl/xrfb/facew/EyesClosedR")
                         {
-                            eyelids[1] = (float)oscMessage.Values[0];
+                            Eyelids[1] = (float)oscMessage.Values[0];
                             continue;
                         }
 
-                        if (mapOSCDirectXRFBUnifiedExpressions.ContainsKey(oscMessage.Address))
+                        if (MapOscDirectXrfbUnifiedExpressions.ContainsKey(oscMessage.Address))
                         {
-                            foreach (UnifiedExpressions unifiedExpression in mapOSCDirectXRFBUnifiedExpressions[oscMessage.Address])
+                            foreach (UnifiedExpressions unifiedExpression in MapOscDirectXrfbUnifiedExpressions[oscMessage.Address])
                             {
                                 //This may not be strictly safe but should be good enough for our use case
-                                ueData[unifiedExpression] = (float)oscMessage.Values[0];                                }
+                                UeData[unifiedExpression] = (float)oscMessage.Values[0];                                }
                         }
                     }
                 }
@@ -275,7 +275,7 @@ public class OSCHandler
                     _receiver.Dispose();
                     _receiver = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                     _receiver.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), _resolvedPort));
-                    _receiver.ReceiveTimeout = TIMEOUT_MS;
+                    _receiver.ReceiveTimeout = TimeoutMs;
                 }
             }
             catch (Exception e) {
